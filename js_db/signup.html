@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>
+        sign up page
+    </title>
+    <script
+        src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+<h1>Welcome to HWJ's sign up page</h1>
+
+<!-- <form action="#" method="POST" onsubmit="return checkAll()">
+    
+
+</form> -->
+
+
+    <input type="text" placeholder="username" id="username"><br>
+    <p id="username_null" style="display:none"><font style="color:red;"> username must not be null</font></p>
+    <input type="password" placeholder="password" id="password"><br>
+    <p id="password_null" style="display:none"><font style="color:red;"> password must not be null</font></p>
+    <input type="text" placeholder="email" id="email"><br>
+    <p id="email_null" style="display:none"><font style="color:red;"> email must not be null</font></p>
+    <input type="text" placeholder="phone" id="phone"><br>
+    <p id="phone_null" style="display:none"><font style="color:red;"> phone must not be null</font></p>
+    <input type="text" placeholder="company" id="company"><br>
+    <p id="company_null" style="display:none"><font style="color:red;"> company must not be null</font></p>
+    <label><input type="radio" name="sex" value="male">male</label>
+    <label><input type="radio" name="sex" value="female">female</label><br>
+    <p id="sex_null" style="display:none"><font style="color:red;"> sex must not be selected</font></p>
+    <!-- <input type="submit" value="OK"> -->
+    <button id="btn" onclick="submitFun()">submit</button>
+    <button id="btn2" onclick="test()"> test</button>
+
+    <div id="userList">User info here</div>
+
+<script>
+
+
+    var ele = {
+        username: document.getElementById("username"),
+        password: document.getElementById("password"),
+        email: document.getElementById("email"),
+        phone: document.getElementById("phone"),
+        company: document.getElementById("company"),
+        sex: $("input[type='radio']:checked")
+    };
+
+    var jsonobj = {
+        "username" : "hwj",
+        "passwod": "pwhwj"
+    }
+
+    function test() {
+        // var obj = JSON.stringify(ele);
+        // ele.sex = $("input[type='radio']:checked").value;
+        // alert(ele.username.value);
+        // alert( $("input[type='radio']:checked"));
+
+        // var jsonobj = {
+        //         "username": ele.username.value,
+        //         "password": ele.password.value
+        //     }
+        // alert(jsonobj["username"] + jsonobj["password"]);
+        alert("this btn is only for testing ")
+    }
+    
+
+    ele.username.onblur = function () {
+        var isNull = checkNull(ele.username.value);
+        if (isNull) {
+            document.getElementById("username_null").style.display = "";
+        } else {
+            document.getElementById("username_null").style.display = "none";
+        }
+    };
+    ele.password.onblur = function () {
+        var isNull = checkNull(ele.password.value);
+        if (isNull) {
+            document.getElementById("password_null").style.display = "";
+        } else {
+            document.getElementById("password_null").style.display = "none";
+        }
+    };
+    ele.email.onblur = function () {
+        var isNull = checkNull(ele.email.value);
+        if (isNull) {
+            document.getElementById("email_null").style.display = "";
+        } else {
+            document.getElementById("email_null").style.display = "none";
+        }
+    };
+
+    ele.phone.onblur = function () {
+        var isNull = checkNull(ele.phone.value);
+        if (isNull) {
+            document.getElementById("phone_null").style.display = "";
+        } else {
+            document.getElementById("phone_null").style.display = "none";
+        }
+    };
+    ele.company.onblur = function () {
+        var isNull = checkNull(ele.company.value);
+        if (isNull) {
+            document.getElementById("company_null").style.display = "";
+        } else {
+            document.getElementById("company_null").style.display = "none";
+        }
+    };
+
+    function checkNull(content) {
+        if (content === "" || content === undefined) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function checkAll() {
+        var isNull = checkNull(ele.username.value) ||
+            checkNull(ele.password.value) ||
+            checkNull(ele.email.value) ||
+            checkNull(ele.phone.value) ||
+            checkNull(ele.company.value);
+        
+        var isSexNull = checkNull(ele.sex.val());
+        if (isSexNull) {
+            document.getElementById("sex_null").style.display = "";
+            return false;
+        } else {
+            document.getElementById("sex_null").style.display = "none";
+        }
+        if (isNull) {
+            return false;
+        }
+        return true;
+    }
+
+
+    function submitFun() {
+        ele.sex = $("input[type='radio']:checked");
+        var flag = checkAll();
+        
+        // alert(ele.sex.val());
+
+        if (flag) {
+            console.log("flag: " + flag);
+            var jsonobj = {
+                "username": ele.username.value,
+                "password": ele.password.value,
+                "email": ele.email.value,
+                "phone" : ele.phone.value,
+                "company": ele.company.value,
+                "sex": ele.sex.val()
+            }
+
+
+            $.ajax ({
+                url: "http://localhost:8080/user/saveUser",
+                type: "post",
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(jsonobj),
+                success: function (data, textStatus, jQxhr) {
+                    $('#userList').html(JSON.stringify(data));
+                },
+
+                error: function (jQxhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                }
+            });
+        }
+    }
+
+
+</script>
+
+
+</body>
+</html>
