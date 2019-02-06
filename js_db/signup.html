@@ -26,6 +26,7 @@
     <p id="password_null" style="display:none"><font style="color:red;"> password must not be null</font></p>
     <input type="text" placeholder="email" id="email"><br>
     <p id="email_null" style="display:none"><font style="color:red;"> email must not be null</font></p>
+    <p id="email_validation" style="display:none"><font style="color:red;"> email is not valid</font></p>
     <input type="text" placeholder="phone" id="phone"><br>
     <p id="phone_null" style="display:none"><font style="color:red;"> phone must not be null</font></p>
     <input type="text" placeholder="company" id="company"><br>
@@ -38,6 +39,21 @@
     <button id="btn2" onclick="test()"> test</button>
 
     <div id="userList">User info here</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>username</th>
+                <th>passwod</th>
+                <th>email</th>
+                <th>phone</th> 
+                <th>company</th>
+                <th>sex</th>
+            </tr>
+        </thead>
+
+        <tbody id="users"></tbody>
+    </table>
 
 <script>
 
@@ -92,9 +108,23 @@
         if (isNull) {
             document.getElementById("email_null").style.display = "";
         } else {
+            // alert("before");
             document.getElementById("email_null").style.display = "none";
+            var flag = isValidEmail(ele.email.value);
+            // alert("hello");
+            if (!flag) {
+                document.getElementById("email_validation").style.display = "";
+            } else {
+                document.getElementById("email_validation").style.display = "none";
+            }
+            
         }
     };
+
+    function isValidEmail(email) {
+        var reg = /^([a-zA-Z0-9]+@[a-z0-9]+\.[a-z]+)$/;
+        return reg.test(email);
+    }
 
     ele.phone.onblur = function () {
         var isNull = checkNull(ele.phone.value);
@@ -168,6 +198,8 @@
                 data: JSON.stringify(jsonobj),
                 success: function (data, textStatus, jQxhr) {
                     $('#userList').html(JSON.stringify(data));
+                    
+                    getAllUser();
                 },
 
                 error: function (jQxhr, textStatus, errorThrown) {
@@ -177,6 +209,34 @@
         }
     }
 
+    function clearUsers() {
+        $("#users").empty();
+    }
+
+
+    function getAllUser(){
+        clearUsers();
+        $.ajax({
+            url: "http://localhost:8080/user/getAllUser",
+            type: "get",
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(data) {
+                for (var element in data) {
+                    unit = data[element];
+                    var template = "<tr>" + 
+                        "<td>" + unit.username + "</td>" +
+                        "<td>" + unit.password + "</td>" +
+                        "<td>" + unit.email + "</td>" +
+                        "<td>" + unit.phone + "</td>" +
+                        "<td>" + unit.company + "</td>" +
+                        "<td>" + unit.sex + "</td>" +
+                        "</tr>"
+                    $("#users").append(template); 
+                }
+            }
+        });
+    }
 
 </script>
 
